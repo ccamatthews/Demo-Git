@@ -85,4 +85,5 @@ anim = animation.FuncAnimation(fig=fig, func=animate,
 rc('animation', html='jshtml')
 rc
 
+
 HTML(anim.to_jshtml())
