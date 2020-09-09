@@ -1,0 +1,88 @@
+%matplotlib inline
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+from matplotlib import animation, rc
+from IPython.display import HTML
+#  Change to using an array in degrees 
+theta_array = np.arange(0,361, 1)
+# mean_anomaly = np.radians(45)
+
+#a = 5
+#e = 0.8
+#b = a * ( 1- e**2)**0.5
+#f = e * a
+
+def r(a, e, theta):
+    return (a * (1 -e**2)) / (1 + (e * np.cos(np.radians(theta))))
+
+def x(a, e, theta):
+    return r(a, e, theta) * np.cos(np.radians(theta))
+
+def y(a, e, theta):
+    return r(a, e, theta) * np.sin(np.radians(theta))
+
+def plot_ellipse(a, e, theta):
+    plt.plot(x(a, e, theta), y(a, e, theta))
+    
+    
+
+# theta_array is now in degrees so we must change to radians
+# r = (a * (1 -e**2))/ (1 + (e * np.cos(np.radians(theta_array))))
+
+fig, ax = plt.subplots()
+fig.size = (10,10)
+plt.axis([-10,10,-10,10])
+# fig = plt.figure(figsize=(a,b))
+ax.set_xlim(( -10, 10))
+ax.set_ylim(( -10, 10))
+
+plot_ellipse(a=5, e=.8, theta=theta_array)
+plot_ellipse(a=5, e=0.0,theta=theta_array)
+
+
+# theta_array is now in degrees so we must chnage to radians
+# plt.plot(a * np.cos(np.radians(theta_array)) - f, b * np.sin(np.radians(theta_array)))
+
+#plt.plot(x(theta_array), y(theta_array))
+        
+
+plt.plot(0,0,'o')
+point1, = plt.plot([],[],'o')
+point2, = plt.plot([],[],'o')
+
+line1, = plt.plot([], [],)
+line2, = plt.plot([], [],)
+
+plt.show()
+
+def animate(true_anomaly):
+   
+    #r = (a * (1 - e**2))/ (1 + (e * np.cos(np.radians(true_anomaly))))
+    #x = r(true_anomaly) * np.cos(np.radians(true_anomaly))
+    #y = r(true_anomaly) * np.sin(np.radians(true_anomaly))
+    x_coord = x(a=5.0, e=0.8, theta=true_anomaly)
+    y_coord = y(a=5.0, e=0.8, theta=true_anomaly)
+    
+    point1.set_data(x_coord, y_coord)
+    
+    line1.set_data([0,x_coord],[0,y_coord])
+    
+    x_coord = x(a=6.0, e=0.0, theta=true_anomaly)
+    y_coord = y(a=6.0, e=0.0, theta=true_anomaly)
+    
+    point2.set_data(x_coord, y_coord)
+    
+    line2.set_data([0,x_coord],[0,y_coord])
+    
+    return point1, point2, line1, line2
+
+anim = animation.FuncAnimation(fig=fig, func=animate,
+                              frames=360, interval=10)
+
+# equivalent to rcParams['animation.html'] = 'html5'
+rc('animation', html='jshtml')
+rc
+
+HTML(anim.to_jshtml())
